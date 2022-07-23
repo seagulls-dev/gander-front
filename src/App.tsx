@@ -1,24 +1,46 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FormEvent, useState } from 'react';
+import axios from 'axios';
 
 function App() {
+
+  const [first, setFirst] = useState<number>();
+  const [second, setSecond] = useState<number>();
+
+  const [result, setResult] = useState<number>();
+
+  const handleSubmit = (e: FormEvent): void => {
+    e.preventDefault();
+    axios.post('http://localhost:4000/add', {
+      first: first, second: second
+    }).then((res: any) => {
+        setResult(res.data);
+    }).catch(e => console.log(e))
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          Input two values and click the button to get sum
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+      <section>
+        <form onSubmit={handleSubmit}>
+          <input type="number" onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setFirst(parseInt(e.target.value))}/>
+          <br />
+          <input type="number" onChange={(e: React.ChangeEvent<HTMLInputElement>): void => setSecond(parseInt(e.target.value))}/>
+          <br />
+          {
+            result &&
+            <h3>
+              Result : {result}
+            </h3>
+          }
+          <button type="submit">
+            Sum
+          </button>
+        </form>
+      </section>
     </div>
   );
 }
